@@ -33,23 +33,40 @@
     <script type="module">
         // Since we are in a Vite environment, we can use glob import 
         // to find all index.html files in the sketches folder.
-        const modules = import.meta.glob('./sketches/*/index.html');
+        const indexFiles = import.meta.glob('./sketches/*/index.html');
+        // Also load meta.json files eagerly to get creation dates
+        const metaFiles = import.meta.glob('./sketches/*/meta.json', { eager: true });
+
         const list = document.getElementById('sketch-list');
         
-        const sketches = Object.keys(modules)
+        const sketches = Object.keys(indexFiles)
             .map(path => {
                 const name = path.split('/')[2];
                 if (name === '_template') return null;
-                return name;
+
+                const metaPath = `./sketches/${name}/meta.json`;
+                const meta = metaFiles[metaPath]?.default || {};
+
+                return {
+                    name,
+                    title: meta.title || name.replace(/-/g, ' '),
+                    date: meta.date || ''
+                };
             })
             .filter(Boolean)
-            .sort();
+            .sort((a, b) => {
+                // Sort by date descending (newest first)
+                if (b.date && a.date) return b.date.localeCompare(a.date);
+                if (b.date) return 1;
+                if (a.date) return -1;
+                return a.name.localeCompare(b.name);
+            });
 
-        sketches.forEach(name => {
+        sketches.forEach(sketch => {
             const li = document.createElement('li');
             const a = document.createElement('a');
-            a.href = `./sketches/${name}/index.html`;
-            a.textContent = name.replace(/-/g, ' ');
+            a.href = `./sketches/${sketch.name}/index.html`;
+            a.textContent = sketch.title;
             li.appendChild(a);
             list.appendChild(li);
         });
