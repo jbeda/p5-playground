@@ -36,9 +36,13 @@
         const indexFiles = import.meta.glob('./sketches/*/index.html');
         // Also load meta.json files eagerly to get creation dates
         const metaFiles = import.meta.glob('./sketches/*/meta.json', { eager: true });
+        // Check for TypeScript files to label sketches
+        const tsFiles = import.meta.glob('./sketches/*/*.{ts,tsx}');
 
         const list = document.getElementById('sketch-list');
         
+        const tsSketches = new Set(Object.keys(tsFiles).map(path => path.split('/')[2]));
+
         const sketches = Object.keys(indexFiles)
             .map(path => {
                 const name = path.split('/')[2];
@@ -50,7 +54,8 @@
                 return {
                     name,
                     title: meta.title || name.replace(/-/g, ' '),
-                    date: meta.date || ''
+                    date: meta.date || '',
+                    isTs: tsSketches.has(name)
                 };
             })
             .filter(Boolean)
@@ -67,6 +72,20 @@
             const a = document.createElement('a');
             a.href = `./sketches/${sketch.name}/index.html`;
             a.textContent = sketch.title;
+
+            if (sketch.isTs) {
+                const badge = document.createElement('span');
+                badge.textContent = 'TS';
+                badge.style.marginLeft = '0.5em';
+                badge.style.fontSize = '0.7em';
+                badge.style.backgroundColor = '#3178c6';
+                badge.style.color = 'white';
+                badge.style.padding = '2px 4px';
+                badge.style.borderRadius = '4px';
+                badge.style.verticalAlign = 'middle';
+                a.appendChild(badge);
+            }
+
             li.appendChild(a);
             list.appendChild(li);
         });

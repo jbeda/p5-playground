@@ -41,6 +41,13 @@ function copyRecursiveSync(src, dest) {
 
 try {
   copyRecursiveSync(templateDir, newSketchDir);
+
+  const meta = {
+    date: new Date().toISOString().split('.')[0],
+    title: sketchName.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  };
+  fs.writeFileSync(path.join(newSketchDir, 'meta.json'), JSON.stringify(meta, null, 2));
+
   console.log(`
 ✨ Created new sketch: ${sketchName}`);
   console.log(`   Location: sketches/${sketchName}/`);
