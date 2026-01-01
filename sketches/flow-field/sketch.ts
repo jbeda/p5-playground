@@ -30,7 +30,7 @@ const sketch = (p: p5) => {
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight);
 
-    pane = new Pane({ title: 'Settings', expanded: true });
+    const pane = new Pane({ title: 'Settings', expanded: true });
     pane.addBinding(PARAMS, 'step', { min: 5, max: 50, step: 1, label: 'Grid Step' });
     pane.addBinding(PARAMS, 'noiseScale', { min: 0.001, max: 0.05, label: 'Zoom' });
     pane.addBinding(PARAMS, 'speed', { min: 0, max: 1.0, step: 0.01, label: 'Speed' });
@@ -41,12 +41,12 @@ const sketch = (p: p5) => {
     pane.addBinding(PARAMS, 'debug', { label: 'Debug' });
 
 
-    pane.addFolder({ title: "Bounce", expanded: true })
-    pane.addBinding(PARAMS, 'bounceBPM', { min: 0, max: 200, label: 'BPM' });
-    pane.addBinding(PARAMS, 'bounceDecay', { min: 0.001, max: 0.05, step: 0.001, label: 'Decay' });
-    pane.addBinding(PARAMS, 'bounceTimeBoost', { min: 0, max: 0.5, step: 0.01, label: 'Time Boost' });
-    pane.addBinding(PARAMS, 'bounceBGColor', { label: 'Background' });
-    pane.addBinding(PARAMS, 'bounceLengthBoost', { min: 0, max: 10.0, step: 0.01, label: 'Length Boost' });
+    const bounce = pane.addFolder({ title: "Bounce", expanded: true })
+    bounce.addBinding(PARAMS, 'bounceBPM', { min: 0, max: 200, label: 'BPM' });
+    bounce.addBinding(PARAMS, 'bounceDecay', { min: 0.001, max: 0.05, step: 0.001, label: 'Decay' });
+    bounce.addBinding(PARAMS, 'bounceTimeBoost', { min: 0, max: 0.5, step: 0.01, label: 'Time Boost' });
+    bounce.addBinding(PARAMS, 'bounceBGColor', { label: 'Background' });
+    bounce.addBinding(PARAMS, 'bounceLengthBoost', { min: 0, max: 10.0, step: 0.01, label: 'Length Boost' });
   };
 
   // Perform the definite integral for an exponential function from a to be with
